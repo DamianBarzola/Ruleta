@@ -1,147 +1,149 @@
 import numpy as np
-import matplotlib.pyplot as mat
-
-#np.mean()promedio  np.dev desviacion   np.var varianza
-a=0
-b=36
-
-
-def ruleta(a,b,n):
-    return np.random.randint(a, b, n)
-
-
-def cant(a,Lista):
-    c=0
-    for i in Lista:
-        if(a==i):
-            c=c+1
-    return c
-
-
-def calcFR(Lista):
-    FrecR=[]
-    lista_nueva = []
-    for i in Lista:
-        z=(cant(i,Lista)/len(Lista))
-        if i not in lista_nueva:
-            lista_nueva.append(i)
-            FrecR.append(z)
-    return FrecR
-
-
-
-def main():
-    n=int(input("Ingrese numero de muestras: "))
-    Lista=ruleta(a,b,n)
-    print(Lista)
-    TablaFrec(Lista)
-    TablaProm(Lista)
-
-
-def TablaProm(Lista):
-    z=[]
-    x=np.mean(Lista)
-    for i in Lista:
-        z.append(x)
-    mat.plot(Lista,z)
-    mat.show()
-    
-
-
-def TablaFrec(Lista):
-    FR=calcFR(Lista)
-    frEsp=[]
-    for i in FR:
-        frEsp.append(1/37)
-    mat.plot(FR,"r")
-    mat.plot(frEsp,"b")
-    mat.xlabel("Nros Diferentes de la ruleta")
-    mat.ylabel("Frecuencia Relativa")
-    mat.show()
-
-
-main()
-
-#------------------------------------------------------------------------------------------------------------------------
-
-
 from random import randint
 import matplotlib.pyplot as plt
 from matplotlib import ticker as tick
 import statistics
 
-#https://www.overleaf.com/project/5c9b84ff1e4a775dfb31fc34
-
-n_muestras = 100
-min_n = 0
-max_n = 36
-
-data = []
-promedio = []
+#np.mean()promedio  np.std desviacion   statistics.variance varianza
+n=1000
+a=0
+b=36
+prom = []
 promedio_promedio = []
 varianza = []
-varianza_media = []
+varianza_promedio = []
+FrecR=[]
+desviacion = []
+desviacion_promedio = []
+lista=[]
+
+
+def main():
+    Listas()
+    print("Numeros:")
+    print(lista)
+    TablaProm()
+    TablaPromProm()
+    TablaFrecRel()
+    TablaFrecAbs()
+    TablaVarianza()
+    TablaVarProm()
+    TablaDesviacion()
+    TablaDesvProm()
+
+
+#--------------------------------------------------------------------------------------------------------------------
+
+def Listas():
+    for i in range(n):
+        lista.append(randint(a,b))
+        prom.append(statistics.mean(lista))
+        promedio_promedio.append(statistics.mean(prom))
+        desviacion.append(np.std(lista))
+        desviacion_promedio.append(np.std(prom))
+        if i >= 2:
+            varianza.append(statistics.variance(lista))
+            varianza_promedio.append(statistics.variance(prom))
+
 
 def adjust_y_axis(x, pos):
-    return x / (len(data) * 1.0)
-
-def plot(a,p,pp,v,vm):
-
-	#graficar histograma de frecuencias absolutas
-
-	fig, ax = plt.subplots()
-	n, bins, patches = ax.hist(a, bins = max_n+1)
-	fig.tight_layout()
-	plt.title("Histograma de frecuencia absoluta")
-	plt.show()
+    return x / (len(lista) * 1.0)
 
 
-	#graficar histograma frecuencia relativa
-	fig, ax = plt.subplots()
-	n, bins, patches = ax.hist(a, bins = max_n+1)
-	fig.tight_layout()
-	plt.title("Histograma de frecuencia relativa")
-	ax.yaxis.set_major_formatter(tick.FuncFormatter(adjust_y_axis))
-	plt.show()
+def TablaProm():
+    promEsp = np.mean(lista)
+    plt.plot(list(range(len(prom))), prom, color="red",label="Promedio")
+    plt.plot([0, n], [promEsp, promEsp], label="Promedio Esperada", color="blue")
+    plt.title("Promedio")
+    plt.xlabel('Nro de tiradas')
+    plt.ylabel('Promedio')
+    plt.legend()
+    plt.show()
 
 
-	#graficar media
-	plt.plot(list(range(len(p))), p, color='b')
-	plt.title("Media")
-	plt.show()
-
-	#graficar media de media
-	plt.plot(list(range(len(pp))), pp, color='b')
-	plt.title("Media de las medias")
-	plt.show()
-
-	#graficar varianza
-	plt.plot(list(range(len(v))), v, color='b')
-	plt.title("Varianza")
-	plt.show()
-
-	#graficar varianza de media
-	plt.plot(list(range(len(vm))), vm, color='b')
-	plt.title("Varianza de las medias")
-	plt.show()
+def TablaPromProm():
+    promEsp = np.mean(lista)
+    plt.title("Promedio de los Promedios")
+    plt.xlabel('Nro de tiradas')
+    plt.ylabel('Promedios')
+    plt.plot(promedio_promedio, label="Promedio", color="red")
+    plt.plot([0, n], [promEsp, promEsp], label="Promedio Esperado", color="blue")
+    plt.legend()
+    plt.show()
 
 
-def showarr(a):
-	for i in range(min_n, max_n+1):
-		print(str(i) + ": "+str(a.count(i)))
+def TablaFrecRel():
+    frEsp = 1 / len(lista)
+    fig, ax = plt.subplots()
+    ax.hist(lista, bins=b + 1, edgecolor ="red")
+    ax.yaxis.set_major_formatter(tick.FuncFormatter(adjust_y_axis))
+    ax.axhline(y=frEsp * 1000, color="blue", label="Frecuencia Relativa Esperada")
+    fig.tight_layout()
+    plt.title("Frecuencia Relativa")
+    plt.xlabel('Nro de tiradas')
+    plt.ylabel('fr')
+    plt.legend()
+    plt.show()
 
 
-for i in range(n_muestras):
-	data.append(randint(min_n,max_n))
-	promedio.append(statistics.mean(data))
-	promedio_promedio.append(statistics.mean(promedio))
-	if i >= 2:
-		varianza.append(statistics.variance(data))
-		varianza_media.append(statistics.variance(promedio))
+def TablaFrecAbs():
+    fabsEsp = n / len(lista)
+    fig, ax = plt.subplots()
+    ax.hist(lista, bins=b + 1, edgecolor="red")
+    ax.axhline(y=fabsEsp, color="blue", label="Frecuencia Absoluta Esperada")
+    fig.tight_layout()
+    plt.title("Frecuencia Absoluta")
+    plt.xlabel('Nro de tiradas')
+    plt.ylabel('fa')
+    plt.legend()
+    plt.show()
 
 
-plot(data,promedio,promedio_promedio,varianza,varianza_media)
-showarr(data)
+def TablaVarianza():
+    varEsp = np.var(lista)
+    plt.title('Varianza')
+    plt.xlabel('Nro de tiradas')
+    plt.ylabel('varianza')
+    plt.plot(varianza, label="Varianza", color="red")
+    plt.plot([0, n], [varEsp, varEsp], label="Varianza Esperada", color="blue")
+    plt.legend()
+    plt.show()
 
-#
+
+def TablaVarProm():
+    varEsp = np.var(lista)
+    plt.title('Varianza de los Promedios')
+    plt.xlabel('Nro de tiradas')
+    plt.ylabel('varianza promedio')
+    plt.plot(varianza_promedio, label="Varianza", color="red")
+    plt.plot([0, n], [varEsp, varEsp], label="Varianza Esperada", color="blue")
+    plt.legend()
+    plt.show()
+
+
+def TablaDesviacion():
+    desvEsp = np.std(lista)
+    plt.title('Desviacion')
+    plt.xlabel('Nro de tiradas')
+    plt.ylabel('desviacion')
+    plt.plot(desviacion, label="Desviacion", color="red")
+    plt.plot([0, n], [desvEsp, desvEsp], label="Desviacion Esperada", color="blue")
+    plt.legend()
+    plt.show()
+
+
+def TablaDesvProm():
+    desvPromEsp=np.std(prom)
+    plt.title('Desviacion de los Promedios')
+    plt.xlabel('Nro de tiradas')
+    plt.ylabel('desviaciones')
+    plt.plot(desviacion_promedio, label="Desviacion", color="red")
+    plt.plot([0, n], [desvPromEsp, desvPromEsp], label="Desviacion Esperada", color="blue")
+    plt.legend()
+    plt.show()
+
+
+main()
+
+#------------------------------------------------------------------------------------------------------------------------
 
