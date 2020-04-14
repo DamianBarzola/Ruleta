@@ -2,7 +2,6 @@ import numpy as np
 from random import randint
 import matplotlib.pyplot as plt
 from matplotlib import ticker as tick
-import statistics
 
 #np.mean()promedio  np.std desviacion   statistics.variance varianza
 n=1000
@@ -37,13 +36,13 @@ def main():
 def Listas():
     for i in range(n):
         lista.append(randint(a,b))
-        prom.append(statistics.mean(lista))
-        promedio_promedio.append(statistics.mean(prom))
+        prom.append(np.mean(lista))
+        promedio_promedio.append(np.mean(prom))
         desviacion.append(np.std(lista))
         desviacion_promedio.append(np.std(prom))
         if i >= 2:
-            varianza.append(statistics.variance(lista))
-            varianza_promedio.append(statistics.variance(prom))
+            varianza.append(np.var(lista))
+            varianza_promedio.append(np.var(prom))
 
 
 def adjust_y_axis(x, pos):
@@ -111,7 +110,7 @@ def TablaVarianza():
 
 
 def TablaVarProm():
-    varEsp = np.var(lista)
+    varEsp = np.var(prom)
     plt.title('Varianza de los Promedios')
     plt.xlabel('Nro de tiradas')
     plt.ylabel('varianza promedio')
