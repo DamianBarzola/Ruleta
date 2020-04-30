@@ -68,15 +68,16 @@ def apuestaDineroInfinito():
 
 def graficaDinero():
     #Dinero Finito
-    plt.subplot(2, 2, 1)
+    #plt.subplot(2, 2, 1)
     plt.xlabel('Nº de tiradas')
     plt.ylabel('Cantidad de Capital')
     plt.title("Capital Acotado ")
     plt.plot([0, len(dineroTotal)], [dineroInicial, dineroInicial], color="b",label="Dinero Inicial")
     plt.plot(dineroTotal, label="Dinero",color="r")
     plt.legend()
+    plt.show()
     #Dinero Infinito
-    plt.subplot(2, 2, 2)
+    #plt.subplot(2, 2, 2)
     plt.xlabel('Nº de tiradas')
     plt.ylabel('Cantidad de Capital')
     plt.title("Capital Infinito a 1000 tiradas")

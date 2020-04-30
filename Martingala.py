@@ -74,7 +74,7 @@ def apuesta_n_veces():
 
 def plot_caja():
     #Dinero Finito
-    #plt.subplot(2, 2, 1)
+    plt.subplot(2, 2, 1)
     plt.grid()
     plt.xlabel('Nº de tiradas')
     plt.ylabel('Cantidad de Capital')
@@ -82,9 +82,8 @@ def plot_caja():
     plt.plot(lista_dinero, label="Dinero",color="r")
     plt.plot([0, len(lista_numeros)], [dinero_inicial, dinero_inicial],color="b",label="Dinero Inicial")
     plt.legend()
-    plt.show()
     #Dinero Infinito
-    #plt.subplot(2, 2, 2)
+    plt.subplot(2, 2, 2)
     plt.grid()
     plt.xlabel('Nº de tiradas')
     plt.ylabel('Cantidad de Capital')
