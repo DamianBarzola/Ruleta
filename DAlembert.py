@@ -1,5 +1,5 @@
-#Apostaremos a 1 de las tres columnas de la ruleta y cada vez que perdamos apostaremos una ficha mas
-#si ganamos volvemos a la apuesta inicial
+#Apostaremos con el metodo D´Alembert en la ruleta y cada vez que perdamos apostaremos una ficha mas
+#si ganamos volvemos a la apuesta anterior jugada
 import numpy as np
 from random import randint
 import matplotlib.pyplot as plt
@@ -7,7 +7,7 @@ from matplotlib import ticker as tick
 #condiciones iniciales
 min = 0
 max = 36
-columna1 = [1, 4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34]
+numeros_rojos = [1, 3, 5, 7, 9, 12, 14, 16, 18, 20, 21, 23, 25, 27, 29, 31, 32, 34, 36]
 dineroInicial=1000
 apuestaMin=10
 ganadoInf=[]
@@ -17,7 +17,7 @@ dineroTotal=[]
 
 
 def estaencolumna():
-    if randint(min, max) in columna1:
+    if randint(min, max) in numeros_rojos:
         return True
     else:
         return False
@@ -35,10 +35,10 @@ def apuestaDinero():
         else:
             if estaencolumna():
                 dinero+=apuesta
-                apuesta=apuestaMin
+                apuesta=apuesta-apuestaMin
             else:
-                dinero-=apuestaMin
-                apuesta=apuestaMin+10
+                dinero-=apuesta
+                apuesta=apuesta+apuestaMin
         a+=1
     return dineroTotal
 
@@ -50,13 +50,15 @@ def apuestaDineroInfinito():
 
     for a in range(0,tiradas):
         dineroTotalInf.append(dinero)
-        if estaencolumna():
-            dinero+=apuesta
-            apuesta=apuestaMin
-
+        if dinero<apuesta:
+            break
         else:
-            dinero-=apuestaMin
-            apuesta=apuestaMin+10
+            if estaencolumna():
+                dinero+=apuesta
+                apuesta=apuestaMin - apuestaMin
+            else:
+                dinero-=apuesta
+                apuesta=apuesta+apuestaMin
 
     return dineroTotalInf
 
@@ -68,20 +70,21 @@ def graficaDinero():
     #Dinero Finito
     plt.subplot(2, 2, 1)
     plt.xlabel('Nº de tiradas')
-    plt.ylabel('Cantidad de Calidad')
-    plt.title("1de3 ")
+    plt.ylabel('Cantidad de Capital')
+    plt.title("Hasta quedarse sin dinero ")
     plt.plot([0, len(dineroTotal)], [dineroInicial, dineroInicial], color="b",label="Dinero Inicial")
-    plt.plot(dineroTotal, label="flujo de dinero",color="r")
+    plt.plot(dineroTotal, label="dinero",color="r")
     plt.legend()
     #Dinero Infinito
     plt.subplot(2, 2, 2)
     plt.xlabel('Nº de tiradas')
-    plt.ylabel('Cantidad de Calidad')
-    plt.title("1de3 con dinero infinito")
+    plt.ylabel('Cantidad de Capital')
+    plt.title("Con dinero infinito a 1000 tiradas")
     plt.plot([0, len(dineroTotalInf)], [dineroInicial, dineroInicial], color="b",label="Dinero Inicial")
-    plt.plot(dineroTotalInf, label="flujo de dinero",color="r")
+    plt.plot(dineroTotalInf, label="dinero",color="r")
     plt.legend()
     plt.show()
+
 
 
 
@@ -89,6 +92,7 @@ def main():
     apuestaDinero()
     apuestaDineroInfinito()
     graficaDinero()
+
 
 
 

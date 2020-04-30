@@ -36,16 +36,15 @@ def apuesta_dinero():
     while dinero >= 0:
         lista_dinero.append(dinero)
         if apuesta > dinero:
-            #print("no tiene tanto dinero, saldo final:", dinero, "cantidad de tiradas:", count)
             break
         lista_numeros.append(rn.randint(min_n, max_n))
         if getColor(lista_numeros[-1]) == "rojo":
             dinero += apuesta
-            apuesta = apuesta_minima  # resetea valor en caso de ganar
+            apuesta = apuesta_minima
         else:
             if getColor(lista_numeros[-1]) == "negro":
                 dinero -= apuesta
-            else:  # el cero solo te hace perder la mitad de lo que apostaste
+            else:
                 dinero -= apuesta / 2
             apuesta *= 2
 
@@ -62,7 +61,7 @@ def apuesta_n_veces():
         lista_numeros2.append(rn.randint(min_n, max_n))
         if getColor(lista_numeros2[-1]) == "rojo":
             dinero += apuesta
-            apuesta = apuesta_minima  # resetea valor en caso de ganar
+            apuesta = apuesta_minima
         else:
             if getColor(lista_numeros2[-1]) == "negro":
                 dinero -= apuesta
@@ -77,20 +76,20 @@ def plot_caja():
     #Dinero Finito
     plt.subplot(2, 2, 1)
     plt.grid()
-    plt.xlabel('Cantidad de tiradas')
-    plt.ylabel('Caja')
+    plt.xlabel('Nº de tiradas')
+    plt.ylabel('Cantidad de Capital')
     plt.title("Hasta quedarse sin dinero")
-    plt.plot(lista_dinero, label="dinero",color="b")
-    plt.plot([0, len(lista_numeros)], [dinero_inicial, dinero_inicial],color="r")
+    plt.plot(lista_dinero, label="dinero",color="r")
+    plt.plot([0, len(lista_numeros)], [dinero_inicial, dinero_inicial],color="b",label="Dinero Inicial")
     plt.legend()
     #Dinero Infinito
     plt.subplot(2, 2, 2)
     plt.grid()
-    plt.xlabel('Cantidad de tiradas')
-    plt.ylabel('Caja')
+    plt.xlabel('Nº de tiradas')
+    plt.ylabel('Cantidad de Capital')
     plt.title("Con dinero infinito a 1000 tiradas")
-    plt.plot(lista_dinero2, label="dinero",color="b")
-    plt.plot([0, len(lista_numeros2)], [dinero_inicial, dinero_inicial],color="r")
+    plt.plot(lista_dinero2, label="dinero",color="r")
+    plt.plot([0, len(lista_numeros2)], [dinero_inicial, dinero_inicial],color="b",label="Dinero Inicial")
     plt.legend()
     plt.show()
 
