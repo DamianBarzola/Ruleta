@@ -8,7 +8,7 @@ import numpy as np
 import random as rand
 
 
-semilla = 0
+semilla = 10
 
 
 def GenMedio(intervalo):
