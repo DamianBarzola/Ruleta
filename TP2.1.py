@@ -7,6 +7,8 @@
 import numpy as np
 import random as rand
 
+from scipy.stats import chi2
+
 
 semilla = 10
 
@@ -44,7 +46,7 @@ def GenGCL( intervalo):
         yield int((b - a) * (xf / (m - 1)) + a)
 
 
-def muestraGCL(n, intervalo):
+def DatosGCL(n, intervalo):
     lista = []
     gen = GenGCL(intervalo)
     for i in range(n):
@@ -53,7 +55,7 @@ def muestraGCL(n, intervalo):
     return lista
 
 
-def muestraMedio(n, intervalo):
+def DatosMedio(n, intervalo):
     lista = []
     gen = GenMedio(intervalo)
     for i in range(n):
@@ -61,11 +63,18 @@ def muestraMedio(n, intervalo):
         lista.append(int(sig))
     return lista
 
+def DatosRandint(n, rango):
+    np.random.seed(semilla)
+    array = []
+    for i in range(n):
+        array.append(np.random.randint(rango[0], rango[1]))
+    return array
 
 def main():
     rango = [1, 100]
-    print(muestraGCL(50,rango))
-    print(muestraMedio(50,rango))
+    print(DatosGCL(50,rango))
+    print(DatosRandint(50,rango))
+    print(DatosMedio(50,rango))
 
 
 main()
