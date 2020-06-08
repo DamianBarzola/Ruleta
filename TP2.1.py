@@ -3,7 +3,7 @@
 #generadores programados con otros, incluyendo el que posee el lenguaje Python
 
 #https://tereom.github.io/est-computacional-2018/numeros-pseudoaleatorios.html
-
+import math
 import numpy as np
 import random as rand
 
@@ -36,7 +36,7 @@ def GenMedio(intervalo):
 def GenGCL( intervalo):
     a, b = intervalo[0], intervalo[1]
     # parameters as in GNU C Library
-    a = 54321 #Multiplicador
+    a = 54321
     c = 44498 #Incremento
     m = 2**32 #Modulo
     xi = semilla
@@ -64,17 +64,65 @@ def DatosMedio(n, intervalo):
     return lista
 
 def DatosRandint(n, rango):
-    np.random.seed(semilla)
-    array = []
-    for i in range(n):
-        array.append(np.random.randint(rango[0], rango[1]))
-    return array
+    u=[]
+    for i in range(15000):
+        u.append(rand.random())
+    return u
+
+
+def testChi(u,n):
+    print("Test de Chi2")
+    a=[]
+    b=1500
+    c=0.1
+    for i in range (n):
+        x =0
+        for j in range (len(u)):
+            if  (c-0.1)<=float(u[j])<=c:
+                x+=1
+        a.append(x)
+        c+=0.1
+    x2=0
+    for i in range(len(a)):
+        x2+=(((a[i]-b)**2)/b)
+    print("X2 = "+ str(x2))
+
+
+def testCorridas(u):
+    print("Test Corridas:")
+    lista = []
+    cont = 1
+    for i in range(len(u)-1):
+        if u[i+1] >= u[i]:
+            lista.append("+")
+        else:
+            lista.append("-")
+
+    for i in range(1, len(lista)):
+        if (lista[i] != lista[i-1]):
+            cont += 1
+    n = len(lista)
+    media = (2*n-1)/3
+    desv = math.sqrt((16*n-29)/90)
+    z = (cont-media)/desv
+    print("Z= "+ str(z))
+
 
 def main():
     rango = [1, 100]
-    print(DatosGCL(50,rango))
-    print(DatosRandint(50,rango))
-    print(DatosMedio(50,rango))
+    a=DatosGCL(50,rango)
+    b=DatosRandint(50,rango)
+    c=DatosMedio(50,rango)
+    print(a)
+    print(b)
+    print(c)
+    testCorridas(a)
+    testCorridas(b)
+    testCorridas(c)
+    testChi(a,50)
+    testChi(b,50)
+    testChi(c,50)
+
 
 
 main()

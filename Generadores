@@ -1,0 +1,119 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import scipy.stats as sp
+import random
+Lista=[]
+
+#-----------------CONTINUAS----------------------------------------------------
+#Distribucion uniforme
+def uniforme(a,b):
+    uni=[]
+    for i in range(100):
+        r = random.random()
+        uni.append(a+(b-a)*r)
+    return uni
+
+#Distribucion exponencial
+def exponencial(ex):
+    exp = []
+    for i in range(100):
+        r = random.random()
+        exp += [-ex*(np.log(r))]
+    return exp
+
+#Distribucion gamma
+def gamma(k,a):
+    g = []
+    for i in range(100):
+        tr=1.0
+        for a in range(k):
+            r = random.random()
+            tr=tr*r
+        g.append(-(np.log(tr)/a))
+    return g
+
+#Distribucion normal
+def normal(ex,stdx):
+    nor=[]
+    for a in range(100):
+        sum=0
+        for b in range(12):
+            r = random.random()
+            sum+=r
+        nor.append([stdx*(sum-6.0)+ex])
+    return nor
+
+#-----------------DISCRETAS----------------------------------------------------
+#Distribucion pascal
+def pascal(k,q):
+    pas=[]
+    for i in range(100):
+        tr=1
+        qr=np.log(q)
+        for a in range(k):
+            r = random.random()
+            tr=tr+r
+        nx=np.log(tr)/qr
+        pas.append(nx)
+    return nx
+
+#Distribucion binomial
+def binomial(n,p):
+    bi=[]
+    for i in range(100):
+        x=0
+        for a in range(n):
+            r = random.random()
+            if((r-p)<0):
+                x=x+1.0
+        bi.append(x)
+    return bi
+
+#Distribucion hipergeometrica
+def hipergeometrica(tn,ns,p):
+    hg=[]
+    for i in range(100):
+        x=0
+        for a in range(ns):
+            r = random.random()
+            if((r-p)<0):
+                s=10
+                x=x+1
+            else:
+                s=0
+            p=(tn*p-s)/(tn-1.0)
+            tn=tn-1.0
+        x.append(x)
+    return hg
+
+#Distribucion Poisson
+def Poisson(p):
+    po=[]
+    for i in range(100):
+        x=0
+        tr=1.0
+        b=np.exp(-p)
+        while(tr-b >= 0):
+            r = random.random()
+            tr=tr*r
+            if(tr-b >= 0):
+                x+=1
+        x.append(x)
+    return x
+
+#Distribucion empirica discreta
+def empirica():
+    emp=[]
+    p=[0.273,0.037,0.195,0.009,0.124,0.058,0.062,0.151,0.047,0.044]
+    for i in range(100):
+        r=random.random()
+        a=0
+        x=1
+        for j in p:
+            a=a+j
+            if (r<=a):
+                break
+            else:
+                x=x+1
+        emp.append(x)
+    return emp
