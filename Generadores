@@ -8,23 +8,33 @@ Lista=[]
 #Distribucion uniforme
 def uniforme(a,b):
     uni=[]
-    for i in range(100):
+    for i in range(1000):
         r = random.random()
         uni.append(a+(b-a)*r)
     return uni
 
+def graficarUniforme(a):
+    plt.title("Distribucion Uniforme")
+    plt.hist(a, edgecolor="black")
+    plt.show()
+
 #Distribucion exponencial
 def exponencial(ex):
     exp = []
-    for i in range(100):
+    for i in range(1000):
         r = random.random()
         exp += [-ex*(np.log(r))]
     return exp
 
+def graficarExponencial(a):
+    plt.title("Distribucion Exponencial")
+    plt.hist(a, bins=25, edgecolor="black")
+    plt.show()
+
 #Distribucion gamma
 def gamma(k,a):
     g = []
-    for i in range(100):
+    for i in range(1000):
         tr=1.0
         for a in range(k):
             r = random.random()
@@ -32,22 +42,32 @@ def gamma(k,a):
         g.append(-(np.log(tr)/a))
     return g
 
+def graficarGamma(a):
+    plt.title("Distribucion Gamma")
+    plt.hist(a, bins=25, edgecolor="black")
+    plt.show()
+
 #Distribucion normal
 def normal(ex,stdx):
     nor=[]
-    for a in range(100):
+    for a in range(1000):
         sum=0
         for b in range(12):
             r = random.random()
             sum+=r
-        nor.append([stdx*(sum-6.0)+ex])
+        nor+=([stdx*(sum-6.0)+ex])
     return nor
+
+def graficarNormal(a):
+    plt.title("Distribucion Normal")
+    plt.hist(a, bins=25, edgecolor="black")
+    plt.show()
 
 #-----------------DISCRETAS----------------------------------------------------
 #Distribucion pascal
 def pascal(k,q):
     pas=[]
-    for i in range(100):
+    for i in range(1000):
         tr=1
         qr=np.log(q)
         for a in range(k):
@@ -55,12 +75,17 @@ def pascal(k,q):
             tr=tr+r
         nx=np.log(tr)/qr
         pas.append(nx)
-    return nx
+    return pas
+
+def graficarPascal(a):
+    plt.title("Distribucion Pascal")
+    plt.hist(a, bins=25, edgecolor="black")
+    plt.show()
 
 #Distribucion binomial
 def binomial(n,p):
     bi=[]
-    for i in range(100):
+    for i in range(1000):
         x=0
         for a in range(n):
             r = random.random()
@@ -69,10 +94,15 @@ def binomial(n,p):
         bi.append(x)
     return bi
 
+def graficarBinomial(a):
+    plt.title("Distribucion Binomial")
+    plt.hist(a, bins=25, edgecolor="black")
+    plt.show()
+
 #Distribucion hipergeometrica
 def hipergeometrica(tn,ns,p):
     hg=[]
-    for i in range(100):
+    for i in range(1000):
         x=0
         for a in range(ns):
             r = random.random()
@@ -83,13 +113,20 @@ def hipergeometrica(tn,ns,p):
                 s=0
             p=(tn*p-s)/(tn-1.0)
             tn=tn-1.0
-        x.append(x)
+        hg.append(x)
     return hg
 
+
+
+def graficarHipergeometrica(a):
+    plt.title("Distribucion Hipergeometrica")
+    plt.hist(a, bins=40, edgecolor="black")
+    plt.show()
+
 #Distribucion Poisson
-def Poisson(p):
+def poisson(p):
     po=[]
-    for i in range(100):
+    for i in range(1000):
         x=0
         tr=1.0
         b=np.exp(-p)
@@ -98,14 +135,19 @@ def Poisson(p):
             tr=tr*r
             if(tr-b >= 0):
                 x+=1
-        x.append(x)
-    return x
+        po.append(x)
+    return po
+
+def graficarPoisson(a):
+    plt.title("Distribucion Poisson")
+    plt.hist(a, bins=25, edgecolor="black")
+    plt.show()
 
 #Distribucion empirica discreta
 def empirica():
     emp=[]
     p=[0.273,0.037,0.195,0.009,0.124,0.058,0.062,0.151,0.047,0.044]
-    for i in range(100):
+    for i in range(1000):
         r=random.random()
         a=0
         x=1
@@ -117,3 +159,34 @@ def empirica():
                 x=x+1
         emp.append(x)
     return emp
+
+def graficarEmpirica(a):
+    plt.title("Distribucion Empirica")
+    plt.hist(a,bins=10, edgecolor="black")
+    plt.show()
+
+
+
+def main():
+    uni = uniforme(0, 1)
+    exp = exponencial(5)
+    gam = gamma(5,20)
+    nor = normal(30,2.35)
+    pas = pascal(5,0.5)
+    bin = binomial(1000,0.4)
+    hip = hipergeometrica(50000000,500,0.4)
+    poi = poisson(50)
+    emp = empirica()
+
+    graficarUniforme(uni)
+    graficarExponencial(exp)
+    graficarGamma(gam)
+    graficarNormal(nor)
+
+    graficarPascal(pas)
+    graficarBinomial(bin)
+    graficarHipergeometrica(hip)
+    graficarPoisson(poi)
+    graficarEmpirica(emp)
+
+main()
