@@ -1,6 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import scipy.stats as sp
+import math
+import scipy.stats
+from scipy.stats import norm
 import random
 Lista=[]
 
@@ -18,6 +20,47 @@ def graficarUniforme(a):
     plt.hist(a, edgecolor="black")
     plt.show()
 
+def testUniforme(a):
+    print('Test Chi Cuadrado para uniforme:')
+    valorTabla = 16.9190  # con alpha 0.05 y grado de libertad 9
+    freq_esperada = len(a)/10
+    frec = [] * 10
+    intervalos = [0] * 10
+    # divido la muestra en 10 intervalos
+    for i in range(0, len(a)):
+        if(a[i] < 0.1):
+            intervalos[0] = intervalos[0] + 1
+        elif(a[i] < 0.2):
+            intervalos[1] = intervalos[1] + 1
+        elif(a[i] < 0.3):
+            intervalos[2] = intervalos[2] + 1
+        elif(a[i] < 0.4):
+            intervalos[3] = intervalos[3] + 1
+        elif(a[i] < 0.5):
+            intervalos[4] = intervalos[4] + 1
+        elif(a[i] < 0.6):
+            intervalos[5] = intervalos[5] + 1
+        elif(a[i] < 0.7):
+            intervalos[6] = intervalos[6] + 1
+        elif(a[i] < 0.8):
+            intervalos[7] = intervalos[7] + 1
+        elif(a[i] < 0.9):
+            intervalos[8] = intervalos[8] + 1
+        else:
+            intervalos[9] = intervalos[9] + 1
+
+    for i in range(0, len(frec)):
+        frec[i] = (intervalos[i] - freq_esperada)**2/freq_esperada
+
+    suma = sum(frec)
+    if(suma < valorTabla):
+        print("Aprobado")
+    else:
+        print("Desaprobado")
+
+
+
+
 #Distribucion exponencial
 def exponencial(ex):
     exp = []
@@ -30,6 +73,35 @@ def graficarExponencial(a):
     plt.title("Distribucion Exponencial")
     plt.hist(a, bins=25, edgecolor="black")
     plt.show()
+
+def testExponencial(a):
+    print("Test Chi Cuadrado para exponencial:")
+    observado = []
+    esperado = []
+    c = 0.3
+    chiquadesperado = round(scipy.stats.chi2.ppf(1-0.05, 9), 2)
+    for i in range(9):
+        x = 0
+        for j in range(len(a)):
+            if (c-0.3) <= float(a[j]) <= c:
+                x += 1
+        observado.append(x)
+        esperado.append(1000*((1-(math.e)**(-(1/5)*c)) -
+                              (1-(math.e)**(-(1/5)*(c-0.3)))))
+        c += 0.3
+    observado.append(1000-sum(observado))
+    esperado.append(1000*((math.e)**(-(1/5)*(c-0.3))))
+    x2 = 0
+    for i in range(len(observado)):
+        x1 = (((observado[i]-esperado[i])**2)/esperado[i])
+        x2 += x1
+    if (x2 < chiquadesperado):
+        print("Aprobado")
+    else:
+        print("Desaprobado")
+
+
+
 
 #Distribucion gamma
 def gamma(k,a):
@@ -47,6 +119,8 @@ def graficarGamma(a):
     plt.hist(a, bins=25, edgecolor="black")
     plt.show()
 
+
+
 #Distribucion normal
 def normal(ex,stdx):
     nor=[]
@@ -62,6 +136,44 @@ def graficarNormal(a):
     plt.title("Distribucion Normal")
     plt.hist(a, bins=25, edgecolor="black")
     plt.show()
+
+def testNormal(a):
+    print("Test Chi Cuadrado para Normal")
+    observado = []
+    esperado = []
+    a1 = 0
+    a2 = 0
+    chiquadesperado = round(scipy.stats.chi2.ppf(1-0.05, 9), 2)
+    c = -80
+    for i in range(10):
+        x = 0
+        for j in range(len(a)):
+            if (c-20) <= float(a[j]) <= c:
+                x += 1
+        observado.append(x)
+        a1 += (c-10)*x
+        a2 += ((c-10)**2)*x
+        c += 20
+    a1 = a1/1000
+    a2 = a2/1000
+    desviacion = math.sqrt(a2-a1**2)
+    media = a1
+    c = -80
+    esperado = []
+    for i in range(10):
+        esperado.append(1000*(norm.cdf((c-media)/desviacion) -
+                              norm.cdf(((c-20)-media)/desviacion)))
+        c += 20
+    x2 = 0
+    for i in range(len(observado)):
+        x1 = (((observado[i]-esperado[i])**2)/esperado[i])
+        x2 += x1
+    if (x2 < chiquadesperado):
+        print("Aprobado")
+    else:
+        print("Desaprobado")
+
+
 
 #-----------------DISCRETAS----------------------------------------------------
 #Distribucion pascal
@@ -82,6 +194,9 @@ def graficarPascal(a):
     plt.hist(a, bins=25, edgecolor="black")
     plt.show()
 
+
+
+
 #Distribucion binomial
 def binomial(n,p):
     bi=[]
@@ -98,6 +213,34 @@ def graficarBinomial(a):
     plt.title("Distribucion Binomial")
     plt.hist(a, bins=25, edgecolor="black")
     plt.show()
+
+def testBinomial(a):
+    print("Test Chi Cuadrado para Binomial")
+    observado = []
+    esperado = []
+    X = scipy.stats.binom(1000, 0.4)
+    c = 354
+    chiquadesperado = round(scipy.stats.chi2.ppf(1-0.05, 9), 2)
+    for i in range(10):
+        x = 0
+        for j in range(len(a)):
+            if (c-14) <= float(a[j]) < c:
+                x += 1
+        observado.append(x)
+        total = sum(X.pmf(k) for k in range(c)) - sum(X.pmf(m)
+                                                      for m in range(c-14))
+        esperado.append(1000*total)
+        c += 14
+    x2 = 0
+    for i in range(len(observado)):
+        x1 = (((observado[i]-esperado[i])**2)/esperado[i])
+        x2 += x1
+    if (x2 < chiquadesperado):
+        print("Aprobado")
+    else:
+        print("Desaprobado")
+
+
 
 #Distribucion hipergeometrica
 def hipergeometrica(tn,ns,p):
@@ -116,12 +259,13 @@ def hipergeometrica(tn,ns,p):
         hg.append(x)
     return hg
 
-
-
 def graficarHipergeometrica(a):
     plt.title("Distribucion Hipergeometrica")
     plt.hist(a, bins=40, edgecolor="black")
     plt.show()
+
+
+
 
 #Distribucion Poisson
 def poisson(p):
@@ -142,6 +286,33 @@ def graficarPoisson(a):
     plt.title("Distribucion Poisson")
     plt.hist(a, bins=25, edgecolor="black")
     plt.show()
+
+def testPoisson(a):
+    print("Test Chi Cuadrado para Poisson")
+    observado = []
+    esperado = []
+    X=scipy.stats.poisson(50)
+    chiquadesperado = round(scipy.stats.chi2.ppf(1-0.05, 9), 2)
+    c =26
+    for i in range(10):
+        x = 0
+        for j in range(len(a)):
+            if (c-6) <= float(a[j]) < c:
+                x += 1
+        observado.append(x)
+        total=sum(X.pmf(k) for k in range (c)) -sum(X.pmf(m) for m in range (c-6))
+        esperado.append(1000*total)
+        c +=6
+    x2 = 0
+    for i in range(len(observado)):
+        x1 = (((observado[i]-esperado[i])**2)/esperado[i])
+        x2 += x1
+    if (x2 < chiquadesperado):
+        print("Aprobado")
+    else:
+        print("Desaprobado")
+
+
 
 #Distribucion empirica discreta
 def empirica():
@@ -165,7 +336,31 @@ def graficarEmpirica(a):
     plt.hist(a,bins=10, edgecolor="black")
     plt.show()
 
+def testEmpirica(a):
+    print("Test Chi Cuadrado para Empírica")
+    observado = []
+    esperado = []
+    chiquadesperado = round(scipy.stats.chi2.ppf(1-0.05, 9),2)
+    p = [0.273, 0.037, 0.195, 0.009, 0.124, 0.058, 0.062, 0.151, 0.047, 0.044]
+    for i in range(10):
+        x = 0
+        for j in range(len(a)):
+            if a[j]==i+1:
+                x += 1
+        observado.append(x)
+        esperado.append(1000 * p[i])
+    x2 = 0
+    for i in range(len(observado)):
+        x1 = (((observado[i]-esperado[i])**2)/esperado[i])
+        x2 += x1
 
+    if (x2 < chiquadesperado):
+        print("Aprobado")
+    else:
+        print("Desaprobado")
+
+
+#-----------------------------------------------------------------------------------
 
 def main():
     uni = uniforme(0, 1)
@@ -178,6 +373,13 @@ def main():
     poi = poisson(50)
     emp = empirica()
 
+    testUniforme(uni)
+    testExponencial(exp)
+    #testNormal(nor)
+    testBinomial(bin)
+    testPoisson(poi)
+    testEmpirica(emp)
+
     graficarUniforme(uni)
     graficarExponencial(exp)
     graficarGamma(gam)
@@ -188,5 +390,6 @@ def main():
     graficarHipergeometrica(hip)
     graficarPoisson(poi)
     graficarEmpirica(emp)
+
 
 main()
