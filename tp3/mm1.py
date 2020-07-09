@@ -32,17 +32,17 @@ def inicializar(lamda):
     global limCola, ocupado, desocup, reloj, tipoEventoSig, estado, cliEnCola, nroTEvento, cliCompletaronDemora, area_cliEnCola, area_estado, arriboTiempo, ultEventoTiempo, sigEventoTiempo, DemorasTotal
     limCola = 100000
     reloj = 0
-    tipoEventoSig = 0    #tipo de evento siguiente
-    estado = True    #estado del servidor  // False=ocupado True=desocupado
-    cliEnCola = 0    #clientes actualmente en cola
-    nroTEvento = 2      #num de tipos de eventos
-    cliCompletaronDemora = 0     #clientes que completaron demora
-    area_cliEnCola = 0.0         #area debajo de Q(t)
-    area_estado = 0.0    #area debajo de B(t)
-    ultEventoTiempo= 0.0   #tiempo del ultimo evento
-    sigEventoTiempo = [ 0, reloj + generarU((1/lamda)), 1e30]  #tiempo del siguiente evento de tipo 1 o 2
-    arriboTiempo = []    #tiempo de arrivo de clientes a la cola
-    DemorasTotal = 0   #total de demoras completadas
+    tipoEventoSig = 0
+    estado = True
+    cliEnCola = 0
+    nroTEvento = 2
+    cliCompletaronDemora = 0
+    area_cliEnCola = 0.0
+    area_estado = 0.0
+    ultEventoTiempo= 0.0
+    sigEventoTiempo = [ 0, reloj + generarU((1/lamda)), 1e30]
+    arriboTiempo = []
+    DemorasTotal = 0
 
 def generarU(a):
     u = random.random()
@@ -51,8 +51,8 @@ def generarU(a):
 
 def timing():
     global tipoEventoSig, sigEventoTiempo, reloj, min_sigEventoTiempo, nroTEvento
-    min_sigEventoTiempo = 1e29  #tiempo minimo del siguiente evento
-    tipoEventoSig = 0    #0 si no hay otro evento
+    min_sigEventoTiempo = 1e29
+    tipoEventoSig = 0
     for i in range(1, nroTEvento+1):
         if sigEventoTiempo[i] < min_sigEventoTiempo:
             min_sigEventoTiempo = sigEventoTiempo[i]
@@ -91,9 +91,9 @@ def salida(mu):
 
 
 def main(mu):
-    lamda = 1 #clientes por minuto
+    lamda = 1
     global ultEventoTiempo,area_cliEnCola,area_estado
-    util_corridas, avgdel_corridas, avgniq_corridas, time_corridas = [], [], [], []     #guardo los rdos de cada corrida para sacar los proms
+    util_corridas, avgdel_corridas, avgniq_corridas, time_corridas = [], [], [], []
     print("\n-------------------------------------------------------------------------------------------------------------- ")
     print("Parametros: ")
     print("Tiempo medio entre arribos: %.3f minutos" % (1/lamda))
@@ -107,7 +107,6 @@ def main(mu):
         while cliCompletaronDemora < n:
             t = timing()
             if t == 0:
-            # update_time_avg_stats()
                 time_since_last_event = reloj - ultEventoTiempo
                 ultEventoTiempo= reloj
                 area_cliEnCola = area_cliEnCola + (cliEnCola * time_since_last_event)
@@ -128,14 +127,15 @@ def main(mu):
         avgdel_corridas.append(DemorasTotal / cliCompletaronDemora)
         avgniq_corridas.append(area_cliEnCola / reloj)
         time_corridas.append(reloj)
+        '''
         print("\nCorrida %d: " % (i+1))
         print("Tiempo promedio de cliente en cola: %.3f minutos " % (DemorasTotal / cliCompletaronDemora))
         print("Promedio de clientes en cola: %.3f" % (area_cliEnCola / reloj))
-        print("Promedio de clientes en cola2: %.3f" % (area_cliEnCola / n))
         print("Utilizacion del servidor: %.3f " % (area_estado / reloj))
         print("Tiempo total: %.3f" % reloj)
+        '''
 
-    print("\nPromedios de los 10 reportes con tasa de arribo:%.2f " % ((lamda/mu)*100)+ "%")
+    print("\nPromedios de las 10 corridas con tasa de arribo: %.2f " % ((lamda/mu)*100)+ "%")
     print("Promedio de tiempos promedios de clientes en cola: %.3f" % np.mean(avgdel_corridas))
     print("Promedio de promedios de clientes en cola:  %.3f" % np.mean(avgniq_corridas))
     print("Promedios de utilidad del servidor: %.3f" % np.mean(util_corridas))
