@@ -26,12 +26,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 #Variables Globales
-lamda = 0.80 #clientes por minuto
-mu = 1
+
 n = 50
-
-
-def inicializar():
+def inicializar(lamda):
     global limCola, ocupado, desocup, reloj, tipoEventoSig, estado, cliEnCola, nroTEvento, cliCompletaronDemora, area_cliEnCola, area_estado, arriboTiempo, ultEventoTiempo, sigEventoTiempo, DemorasTotal
     limCola = 100000
     reloj = 0
@@ -66,8 +63,8 @@ def timing():
         reloj = min_sigEventoTiempo
         return 0
 
-def arribo():
-    global sigEventoTiempo, reloj, lamda, estado, cliEnCola, cliCompletaronDemora, mu, DemorasTotal
+def arribo(mu,lamda):
+    global sigEventoTiempo, reloj, estado, cliEnCola, cliCompletaronDemora,  DemorasTotal
     sigEventoTiempo[1] = reloj + generarU(1/lamda)
     if estado == False:
         cliEnCola += 1
@@ -80,8 +77,8 @@ def arribo():
         sigEventoTiempo[2] = reloj + generarU(1/mu)
 
 
-def salida():
-    global cliEnCola, estado, sigEventoTiempo, DemorasTotal, arriboTiempo, cliCompletaronDemora, mu
+def salida(mu):
+    global cliEnCola, estado, sigEventoTiempo, DemorasTotal, arriboTiempo, cliCompletaronDemora
     if cliEnCola == 0:
         estado = True
         sigEventoTiempo[2] = 1e30
@@ -93,18 +90,19 @@ def salida():
         sigEventoTiempo[2] = reloj + generarU(1/mu)
 
 
-def main():
+def main(mu):
+    lamda = 1 #clientes por minuto
     global ultEventoTiempo,area_cliEnCola,area_estado
     util_corridas, avgdel_corridas, avgniq_corridas, time_corridas = [], [], [], []     #guardo los rdos de cada corrida para sacar los proms
-
+    print("\n-------------------------------------------------------------------------------------------------------------- ")
     print("Parametros: ")
     print("Tiempo medio entre arribos: %.3f minutos" % (1/lamda))
     print("Tiempo medio de servicio: %.3f minutos" % (1/mu))
-    print("Tasa de arribo: %.2f " % ((1/lamda)/(1/mu)*100)+ "%")
+    print("Tasa de arribo: %.2f " % ((lamda/mu)*100)+ "%")
     print("Clientes en el sistema: ", n)
 
     for i in range(10):
-        inicializar()
+        inicializar(lamda)
         time_acum, server_acum, niq_acum = [], [], []
         while cliCompletaronDemora < n:
             t = timing()
@@ -119,9 +117,9 @@ def main():
                 niq_acum.append(cliEnCola)
 
                 if tipoEventoSig == 1:
-                    arribo()
+                    arribo(mu,lamda)
                 elif tipoEventoSig == 2:
-                    salida()
+                    salida(mu)
 
             elif t == 1:
                 break
@@ -133,14 +131,18 @@ def main():
         print("\nCorrida %d: " % (i+1))
         print("Tiempo promedio de cliente en cola: %.3f minutos " % (DemorasTotal / cliCompletaronDemora))
         print("Promedio de clientes en cola: %.3f" % (area_cliEnCola / reloj))
-        #print("Promedio de clientes en cola2: %.3f" % (area_cliEnCola / n))
+        print("Promedio de clientes en cola2: %.3f" % (area_cliEnCola / n))
         print("Utilizacion del servidor: %.3f " % (area_estado / reloj))
         print("Tiempo total: %.3f" % reloj)
 
-    print("\nPromedios de los 10 reportes: ")
+    print("\nPromedios de los 10 reportes con tasa de arribo:%.2f " % ((lamda/mu)*100)+ "%")
     print("Promedio de tiempos promedios de clientes en cola: %.3f" % np.mean(avgdel_corridas))
     print("Promedio de promedios de clientes en cola:  %.3f" % np.mean(avgniq_corridas))
     print("Promedios de utilidad del servidor: %.3f" % np.mean(util_corridas))
     print("Promedio de tiempo total: %.3f" % np.mean(time_corridas))
 
-main()
+
+a=(12/9)
+m=[4,2,a,1,0.8]
+for i in m:
+    main(i)
