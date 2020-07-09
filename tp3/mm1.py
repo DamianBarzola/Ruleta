@@ -28,20 +28,18 @@ import matplotlib.pyplot as plt
 #Variables Globales
 lamda = 0.80 #clientes por minuto
 mu = 1
-total_cus = 50
+n = 50
 
 
 def inicializar():
     global limCola, ocupado, desocup, reloj, tipoEventoSig, estado, cliEnCola, nroTEvento, cliCompletaronDemora, area_cliEnCola, area_estado, arriboTiempo, ultEventoTiempo, sigEventoTiempo, DemorasTotal
     limCola = 100000
-    ocupado = 1    #ocupado
-    desocup = 0    #desocupado
-    reloj = 0     #reloj del simulacion
+    reloj = 0
     tipoEventoSig = 0    #tipo de evento siguiente
-    estado = desocup    #estado del servidor
-    cliEnCola = 0    #num de clientes actualmente en cola
+    estado = True    #estado del servidor  // False=ocupado True=desocupado
+    cliEnCola = 0    #clientes actualmente en cola
     nroTEvento = 2      #num de tipos de eventos
-    cliCompletaronDemora = 0     #num de clientes que completaron demora
+    cliCompletaronDemora = 0     #clientes que completaron demora
     area_cliEnCola = 0.0         #area debajo de Q(t)
     area_estado = 0.0    #area debajo de B(t)
     ultEventoTiempo= 0.0   #tiempo del ultimo evento
@@ -63,7 +61,6 @@ def timing():
             min_sigEventoTiempo = sigEventoTiempo[i]
             tipoEventoSig = i
     if tipoEventoSig == 0:
-        print("Lista vacia en tiempo %f" % reloj)
         return 1
     else:
         reloj = min_sigEventoTiempo
@@ -72,21 +69,21 @@ def timing():
 def arribo():
     global sigEventoTiempo, reloj, lamda, estado, cliEnCola, cliCompletaronDemora, mu, DemorasTotal
     sigEventoTiempo[1] = reloj + generarU(1/lamda)
-    if estado == ocupado:
+    if estado == False:
         cliEnCola += 1
         arriboTiempo.append(reloj)
     else:
         # delay = 0
         # DemorasTotal += delay
         cliCompletaronDemora += 1
-        estado = ocupado
+        estado = False
         sigEventoTiempo[2] = reloj + generarU(1/mu)
 
 
 def salida():
     global cliEnCola, estado, sigEventoTiempo, DemorasTotal, arriboTiempo, cliCompletaronDemora, mu
     if cliEnCola == 0:
-        estado = desocup
+        estado = True
         sigEventoTiempo[2] = 1e30
     else:
         delay = reloj - arriboTiempo.pop(0)
@@ -104,12 +101,12 @@ def main():
     print("Tiempo medio entre arribos: %.3f minutos" % (1/lamda))
     print("Tiempo medio de servicio: %.3f minutos" % (1/mu))
     print("Tasa de arribo: %.2f " % ((1/lamda)/(1/mu)*100)+ "%")
-    print("Clientes en el sistema: %d" % total_cus)
+    print("Clientes en el sistema: ", n)
 
     for i in range(10):
         inicializar()
         time_acum, server_acum, niq_acum = [], [], []
-        while cliCompletaronDemora < total_cus:
+        while cliCompletaronDemora < n:
             t = timing()
             if t == 0:
             # update_time_avg_stats()
@@ -136,6 +133,7 @@ def main():
         print("\nCorrida %d: " % (i+1))
         print("Tiempo promedio de cliente en cola: %.3f minutos " % (DemorasTotal / cliCompletaronDemora))
         print("Promedio de clientes en cola: %.3f" % (area_cliEnCola / reloj))
+        #print("Promedio de clientes en cola2: %.3f" % (area_cliEnCola / n))
         print("Utilizacion del servidor: %.3f " % (area_estado / reloj))
         print("Tiempo total: %.3f" % reloj)
 
