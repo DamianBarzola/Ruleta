@@ -94,7 +94,6 @@ def main(mu):
     lamda = 1
     global ultEventoTiempo,area_cliEnCola,area_estado
     util_corridas, avgdel_corridas, avgniq_corridas, time_corridas = [], [], [], []
-    print("\n-------------------------------------------------------------------------------------------------------------- ")
     print("Parametros: ")
     print("Tiempo medio entre arribos: %.3f minutos" % (1/lamda))
     print("Tiempo medio de servicio: %.3f minutos" % (1/mu))
@@ -127,19 +126,13 @@ def main(mu):
         avgdel_corridas.append(DemorasTotal / cliCompletaronDemora)
         avgniq_corridas.append(area_cliEnCola / reloj)
         time_corridas.append(reloj)
-        '''
-        print("\nCorrida %d: " % (i+1))
-        print("Tiempo promedio de cliente en cola: %.3f minutos " % (DemorasTotal / cliCompletaronDemora))
-        print("Promedio de clientes en cola: %.3f" % (area_cliEnCola / reloj))
-        print("Utilizacion del servidor: %.3f " % (area_estado / reloj))
-        print("Tiempo total: %.3f" % reloj)
-        '''
 
     print("\nPromedios de las 10 corridas con tasa de arribo: %.2f " % ((lamda/mu)*100)+ "%")
     print("Promedio de tiempos promedios de clientes en cola: %.3f" % np.mean(avgdel_corridas))
     print("Promedio de promedios de clientes en cola:  %.3f" % np.mean(avgniq_corridas))
-    print("Promedios de utilidad del servidor: %.3f" % np.mean(util_corridas))
+    print("Promedios de utilidad del servidor: %.3f" % (1-np.mean(util_corridas)))
     print("Promedio de tiempo total: %.3f" % np.mean(time_corridas))
+    print("\n-------------------------------------------------------------------------------------------------------------- ")
 
 
 a=(12/9)
